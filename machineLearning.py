@@ -37,7 +37,7 @@ def wordCount( inputFile ):
 
     # Count occurences of one word. Primarily for checking that it is the right tweets imported
     word = "sport"
-    print wordlist.count(word)
+    print "Word \'", word,"\' occurs", wordlist.count(word), "times."
 
     # Print occurences for every word in vocab; And output to file 'data.txt'
     for word in vocab:
@@ -47,6 +47,8 @@ def wordCount( inputFile ):
        outputFile.write('\t')
        outputFile.write(str(o))
        outputFile.write('\n')
+
+    print "Data written to output file"
        
 
 """
