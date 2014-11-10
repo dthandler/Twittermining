@@ -15,7 +15,9 @@ stopwordFile = 'stopwords.txt'
 #ml.wordCount(databaseFile, inputWord='liverpool')
 #ml.makeTextMatrix(databaseFile, stopwordFile)
 
-#ml.getWordsFromTweet(0)
+#ml.getWordsFromTweet(79)
 #ml.findMostPopularWord()
 
-ml.findKMostPopularWords(K=6)
+#ml.findKMostPopularWords(K=6)
+
+ml.predictWord(['football','everton'])

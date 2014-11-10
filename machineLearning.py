@@ -73,9 +73,6 @@ def makeTextMatrix( inputFile, stopwordFile ):
         
     np.savetxt('datamatrix.txt', X, fmt='%i')
 
-    # Display the result
-    print len(attributeNames)
-
 
 """
 Print out a sorted list of word from a given tweet
@@ -83,14 +80,7 @@ Print out a sorted list of word from a given tweet
 def getWordsFromTweet( tweetNo ):
     X = np.asmatrix(np.loadtxt('datamatrix.txt'))
     tweet = X.getA()[tweetNo]
-    y = open('attributes.txt','r').readlines()
-    header = []
-    
-    # Sanitize columnheader
-    for line in y:
-        header.append(re.sub("\:.*\n","",line))
-    
-    header = np.asarray(header)
+    header = sanitizeColumnheader()
     
     for attributeNo, value in enumerate(tweet):
         if value != 0:
@@ -103,14 +93,7 @@ Count all occurences of each word, and find the most used
 def findMostPopularWord():
     X = np.asmatrix(np.loadtxt('datamatrix.txt'))
     
-    y = open('attributes.txt','r').readlines()
-    header = []
-    
-    # Sanitize columnheader
-    for line in y:
-        header.append(re.sub("\:.*\n","",line))
-    
-    header = np.asarray(header)
+    header = sanitizeColumnheader()
     
     currentMax = 0
     currentCounter = 0
@@ -133,14 +116,7 @@ Count all occurences of each word, and find the k most used. K is 3 as standard
 def findKMostPopularWords( K = 3 ):
     X = np.asmatrix(np.loadtxt('datamatrix.txt'))
     
-    y = open('attributes.txt','r').readlines()
-    header = []
-    
-    # Sanitize columnheader
-    for line in y:
-        header.append(re.sub("\:.*\n","",line))
-    
-    header = np.asarray(header)
+    header = sanitizeColumnheader()
     
     maxList = []
     
@@ -174,3 +150,63 @@ def findNewMinMax( tuppelList ):
             minIndex = no
     return minIndex
     
+#Sanitize columnheader
+def sanitizeColumnheader():
+    y = open('attributes.txt','r').readlines()
+    header = []
+    
+    # Sanitize columnheader
+    for line in y:
+        header.append(re.sub("\n","",line))
+    
+    return np.asarray(header)
+
+"""
+Given a list of words, the methods predicts which words might be in tweets with the word in the word list
+and calculates the probability that this is the case.
+"""
+def predictWord( wordList ):
+    
+    #Initialisation of variables
+    noOfWords = len(wordList)
+    
+    X = np.asmatrix(np.loadtxt('datamatrix.txt'))    
+    header = sanitizeColumnheader()
+    
+    vector = [0 for x in range(len(header))]
+    predicting = [0 for x in range(len(header))]
+    
+    outputList = []
+    
+    #Defining the vector to compare
+    for word in wordList:
+        if word in header:
+            x = np.where(header==word)[0][0]
+            vector[x] = 1
+            
+    indexes = [i for i,j in enumerate(vector) if j == 1]
+
+    similarTweets = 0 #Counter variable
+
+    for row in X:
+        similarityCounter = 0
+        row = row.getA()[0]
+        
+        for index in indexes:
+            if row[index] == 1:
+                similarityCounter = similarityCounter + 1
+        
+        if similarityCounter == noOfWords: #If this is true, all words in wordList is in the current tweet
+            predicting = predicting + row
+            similarTweets = similarTweets + 1
+    
+    for index in indexes: #Removing the searchword from the result vector
+        predicting[index] = 0
+    
+    for index, occurence in enumerate(predicting): #Calculating probability for occurence for each word, and saves them in a list
+        if occurence > 0:
+            probability = (occurence / similarTweets) * 100
+            outputList.append((header[index], probability))
+
+    #Prints result
+    print outputList
