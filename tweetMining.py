@@ -1,22 +1,34 @@
 import twython
+import os
 import re
 import codecs
+import configparser 
 from twython.exceptions import TwythonError
+
 
 class TweetMining:
     twitter = None
 
-    def __init__(self, Consumer_Key, Consumer_Secret, Secret_Token=None):
+    def __init__(self, Consumer_Key=None, Consumer_Secret=None, Secret_Token=None):
         """
         Application-only authentication to twitter.
         Authenticates with a token, use keys if there is none.
+        By default look for a cfg file
         """
-        if Secret_Token != None:
+        if os.path.isfile('app.cfg'):
+            config = configparser.RawConfigParser()
+            config.read('app.cfg')
+            Consumer_Key = config.get('twitter', 'APP_KEY')
+            Consumer_Secret = config.get('twitter', 'APP_SECRET')
+            Secret_Token = config.get('twitter', 'ACCESS_TOKEN')
+        if (Secret_Token != None and Consumer_Key != None and Consumer_Secret != None):
             self.twitter = twython.Twython(Consumer_Key, access_token=Secret_Token)
-        else:
+        elif (Secret_Token == None and Consumer_Key != None and Consumer_Secret != None):
             self.twitter = twython.Twython(Consumer_Key, Consumer_Secret, oauth_version=2)
             Secret_Token = TweetMining.twitter.obtain_access_token()
             print('Your access token is: ', Secret_Token)
+        elif (Consumer_Key == None or Consumer_Secret == None):
+            print("Twitter authentication error, please use cfg file")
      
     def save_tweets(self, search_statuses, filename):
         """
@@ -56,4 +68,4 @@ class TweetMining:
         max_id = None
         for i in range(0, search_count):
             max_id = self.search_iteration(search_query, filename, max_id)
-            print("Iteration ", i+1, " of ", search_count, " done.")
+            print("Iteration ", i + 1, " of ", search_count, " done.")

@@ -1,17 +1,7 @@
 from tweetMining import TweetMining
 
-#testing tweetMining
+#testing tweetMining - authentication keys are needed, they can be in a cfg file
+tweetminer = TweetMining()
 
-APP_KEY = ''
-APP_SECRET = ''
-ACCESS_TOKEN = ''
-
-#Access token is optional
-
-tweetminer = TweetMining(APP_KEY,APP_SECRET,ACCESS_TOKEN)
-
-# search_tweets(hundreds of tweets desired int, query string, output filename string)
-tweetminer.search_tweets(2, 'sport', 'output.txt')
-
-
-
+# search_tweets(hundreds of desired tweets, query string, output filename)
+tweetminer.search_tweets(2, 'sport', 'test_l.txt')
