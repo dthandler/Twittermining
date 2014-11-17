@@ -9,15 +9,16 @@ Technical University of Denmark
 
 import machineLearning as ml
 
-databaseFile = 'database.txt'
+#databaseFile = 'testDatabase.txt'
+databaseFile = 'database_3900tweets.txt'
 stopwordFile = 'stopwords.txt'
 
-#ml.wordCount(databaseFile, inputWord='liverpool')
-#ml.makeTextMatrix(databaseFile, stopwordFile)
+#ml.wordCount(databaseFile, inputWord='http')
+ml.makeTextMatrix(databaseFile, stopwordFile)
 
 #ml.getWordsFromTweet(79)
-#ml.findMostPopularWord()
+ml.findMostPopularWord()
 
 #ml.findKMostPopularWords(K=6)
 
-ml.predictWord(['football','everton'])
+#ml.assiciateMining(['football','everton'])
