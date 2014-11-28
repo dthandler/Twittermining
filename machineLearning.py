@@ -26,29 +26,27 @@ formattedDatabase = "data/formattedDatabase.data"
 
 
 class MachineLearning:
-    
+
     def __init__(self, databaseFile, stopwordFile):
         self._formatDatabase(databaseFile)
         self._makeTextMatrix(databaseFile, stopwordFile)
-        
+
         self._nonNegativeFactorization()
-    
+
     """
     Uses tmgSimple to make e textmatrix of the input tweets
     """
 
-
     def _formatDatabase(self, dataBase):
         f = open(dataBase)
-                
+
         array = (re.compile("\n").sub(" ", f.read())).split("; ")
-                
+
         outputFile = open(formattedDatabase, 'w')
-                
+
         for tweet in array:
             outputFile.write(tweet)
             outputFile.write('\n')
-
 
     def _makeTextMatrix(self, inputFile, stopwordFile):
 
@@ -56,7 +54,6 @@ class MachineLearning:
         textMatrix = TmgSimple(filename=formattedDatabase,
                                stopwords_filename=stopwordFile)
 
-    #    X = textMatrix.get_matrix(1, 500, sort=True)
         attributeNames = textMatrix.get_words(sort=True)
 
         # Make an output file
@@ -64,9 +61,8 @@ class MachineLearning:
         datFile = open(dataFile, 'w')
 
         for word in attributeNames:
-            attFile.write(word)
-            attFile.write('\n')
-    
+            attFile.write(str(word, '\n'))
+
         for i in range(40):
             np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000,
                                                       sort=True), fmt='%i')
@@ -75,9 +71,8 @@ class MachineLearning:
     Uses sklearn to make the non negative factorization
     """
 
-
     def _nonNegativeFactorization(self):
-    
+
         print 'Loading data..'
         X = np.asmatrix(np.loadtxt(dataFile))
         print 'Data loaded. Making model..'
@@ -85,21 +80,20 @@ class MachineLearning:
         print 'Fitting model..'
         model.fit(X)
         print 'Model fit'
-    
-        
+
     """
     THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS;
     THESE ARE DEVELOPED TO CHECK THE IMPLEMENTATION OF THE
     BAG OF WORD REPRESENTATION AND THE MATRIX FACTORIZATION
     """
-    
+
     """
     Makes a set of words. Print every word
     and number of the words occurences in the tweets.
     If second argument is used
     the method prints the number of occurences of the given word.
     """
-    
+
     def wordCount(self, inputFile, inputWord=0):
         # Import the tweets
         raw = open(inputFile).read()
@@ -127,7 +121,6 @@ class MachineLearning:
         else:
             print inputWord, 'has', wordlist.count(inputWord), 'occurences'
 
-        
     # Sanitize columnheader
     def _sanitizeColumnheader(self):
         y = open(attributFile, 'r').readlines()
@@ -141,8 +134,7 @@ class MachineLearning:
     """
     Print out a sorted list of word from a given tweet
     """
-    
-    
+
     def getWordsFromTweet(self, tweetNo):
         X = np.asmatrix(np.loadtxt(dataFile))
         tweet = X.getA()[tweetNo]
@@ -152,12 +144,10 @@ class MachineLearning:
             if value != 0:
                 print header[attributeNo]
 
-
     """
     Count all occurences of each word, and find the most used.
     Optimized version which uses more build-in functions than last iteration
     """
-
 
     def findMostPopularWord(self):
         # Import the tweets and list the raw words
@@ -179,13 +169,11 @@ class MachineLearning:
 
         print currentWord, 'has', currentMax, 'occurences'
 
-
     """
     Given a list of words, the methods predicts which words
     might be in tweets with the word in the word list
     and calculates the probability that this is the case.
     """
-
 
     def assiciateMining(self, wordList):
 
@@ -219,15 +207,15 @@ class MachineLearning:
                     similarityCounter = similarityCounter + 1
 
             if similarityCounter == noOfWords:
-                # If this is true, all words in wordList is in the current tweet
+                # If true, all words in wordList is in the current tweet
                 predicting = predicting + row
                 similarTweets = similarTweets + 1
 
-        for index in indexes:  # Removing the searchword from the result vector
+        for index in indexes:  # Removing the searchword from resultvector
             predicting[index] = 0
 
         for index, occurence in enumerate(predicting):
-            # Calc. probability for occurence for each word, and saves them in a list
+            # Calc. prob. for occ. for each word, and saves them in a list
             if occurence > 0:
                 probability = (occurence / similarTweets) * 100
                 outputList.append((header[index], probability))
