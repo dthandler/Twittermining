@@ -7,18 +7,13 @@ s113446
 Technical University of Denmark
 """
 
-import machineLearning as ml
+from machineLearning import MachineLearning
 
-#databaseFile = 'testDatabase.txt'
-databaseFile = 'database_3900tweets.txt'
-stopwordFile = 'stopwords.txt'
+#databaseFile = 'data/test40k_2nd.txt'
+databaseFile = 'data/database_3900tweets.txt'
+stopwordFile = 'data/stopwords.txt'
 
-#ml.wordCount(databaseFile, inputWord='http')
-ml.makeTextMatrix(databaseFile, stopwordFile)
+analysis = MachineLearning(databaseFile, stopwordFile)
 
-#ml.getWordsFromTweet(79)
-ml.findMostPopularWord()
+#analysis.nonNegativeFactorization()
 
-#ml.findKMostPopularWords(K=6)
-
-#ml.assiciateMining(['football','everton'])
