@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Textprocessing of tweets
 
@@ -33,11 +34,11 @@ class MachineLearning:
 
         self._nonNegativeFactorization()
 
-    """
-    Uses tmgSimple to make e textmatrix of the input tweets
-    """
-
     def _formatDatabase(self, dataBase):
+        """
+        Uses tmgSimple to make e textmatrix of the input tweets
+        """
+
         f = open(dataBase)
 
         array = (re.compile("\n").sub(" ", f.read())).split("; ")
@@ -67,11 +68,10 @@ class MachineLearning:
             np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000,
                                                       sort=True), fmt='%i')
 
-    """
-    Uses sklearn to make the non negative factorization
-    """
-
     def _nonNegativeFactorization(self):
+        """
+        Uses sklearn to make the non negative factorization
+        """
 
         print 'Loading data..'
         X = np.asmatrix(np.loadtxt(dataFile))
@@ -87,14 +87,13 @@ class MachineLearning:
     BAG OF WORD REPRESENTATION AND THE MATRIX FACTORIZATION
     """
 
-    """
-    Makes a set of words. Print every word
-    and number of the words occurences in the tweets.
-    If second argument is used
-    the method prints the number of occurences of the given word.
-    """
-
     def wordCount(self, inputFile, inputWord=0):
+        """
+        Makes a set of words. Print every word
+        and number of the words occurences in the tweets.
+        If second argument is used
+        the method prints the number of occurences of the given word.
+        """
         # Import the tweets
         raw = open(inputFile).read()
 
@@ -131,11 +130,10 @@ class MachineLearning:
 
         return np.asarray(header)
 
-    """
-    Print out a sorted list of word from a given tweet
-    """
-
     def getWordsFromTweet(self, tweetNo):
+        """
+        Print out a sorted list of word from a given tweet
+        """
         X = np.asmatrix(np.loadtxt(dataFile))
         tweet = X.getA()[tweetNo]
         header = self._sanitizeColumnheader()
@@ -144,12 +142,11 @@ class MachineLearning:
             if value != 0:
                 print header[attributeNo]
 
-    """
-    Count all occurences of each word, and find the most used.
-    Optimized version which uses more build-in functions than last iteration
-    """
-
     def findMostPopularWord(self):
+        """
+        Count all occurences of each word, and find the most used.
+        Optimized version: Uses more build-in functions than last iteration
+        """
         # Import the tweets and list the raw words
         raw = open(formattedDatabase).read()
         rawWordlist = [word.lower() for word in nltk.word_tokenize(raw)]
@@ -169,13 +166,12 @@ class MachineLearning:
 
         print currentWord, 'has', currentMax, 'occurences'
 
-    """
-    Given a list of words, the methods predicts which words
-    might be in tweets with the word in the word list
-    and calculates the probability that this is the case.
-    """
-
     def assiciateMining(self, wordList):
+        """
+        Given a list of words, the methods predicts which words
+        might be in tweets with the word in the word list
+        and calculates the probability that this is the case.
+        """
 
         # Initialisation of variables
         noOfWords = len(wordList)
