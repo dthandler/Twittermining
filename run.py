@@ -15,5 +15,3 @@ stopwordFile = 'data/stopwords.txt'
 
 analysis = MachineLearning(databaseFile, stopwordFile)
 
-#analysis.nonNegativeFactorization()
-

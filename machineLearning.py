@@ -25,23 +25,13 @@ dataFile = 'data/datamatrix.data'
 formattedDatabase = "data/formattedDatabase.data"
 
 
-"""
-Makes a set of words. Print every word
-and number of the words occurences in the tweets.
-If second argument is used
-the method prints the number of occurences of the given word.
-"""
-
 class MachineLearning:
-#    attributFile = 'attributes.data'
-#    dataFile = 'datamatrix.data'
-#    formattedDatabase = "formattedDatabase.data"
     
     def __init__(self, databaseFile, stopwordFile):
         self._formatDatabase(databaseFile)
         self._makeTextMatrix(databaseFile, stopwordFile)
         
-        self.nonNegativeFactorization()
+        self._nonNegativeFactorization()
     
     """
     Uses tmgSimple to make e textmatrix of the input tweets
@@ -78,29 +68,37 @@ class MachineLearning:
             attFile.write('\n')
     
         for i in range(40):
-            np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000, sort=True), fmt='%i')
+            np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000,
+                                                      sort=True), fmt='%i')
 
     """
     Uses sklearn to make the non negative factorization
     """
 
 
-    def nonNegativeFactorization(self):
+    def _nonNegativeFactorization(self):
     
         print 'Loading data..'
         X = np.asmatrix(np.loadtxt(dataFile))
         print 'Data loaded. Making model..'
-        model = ProjectedGradientNMF()
+        model = ProjectedGradientNMF(init='nndsvd')
         print 'Fitting model..'
         model.fit(X)
         print 'Model fit'
     
         
     """
-    THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS; THESE ARE DEVELOPED TO CHECK THE IMPLEMENTATION OF THE
+    THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS;
+    THESE ARE DEVELOPED TO CHECK THE IMPLEMENTATION OF THE
     BAG OF WORD REPRESENTATION AND THE MATRIX FACTORIZATION
     """
     
+    """
+    Makes a set of words. Print every word
+    and number of the words occurences in the tweets.
+    If second argument is used
+    the method prints the number of occurences of the given word.
+    """
     
     def wordCount(self, inputFile, inputWord=0):
         # Import the tweets
@@ -129,21 +127,6 @@ class MachineLearning:
         else:
             print inputWord, 'has', wordlist.count(inputWord), 'occurences'
 
-    
-    """
-    Print out a sorted list of word from a given tweet
-    """
-
-    # Finds the lowest tuppelvalue in a list of tuples.
-    # Used in findKMostPopularWords()-method
-    def _findNewMinMax(self, tuppelList):
-        currentMin = 1000
-        minIndex = 0
-        for no, (x, y) in enumerate(tuppelList):
-            if x < currentMin:
-                currentMin = x
-                minIndex = no
-        return minIndex
         
     # Sanitize columnheader
     def _sanitizeColumnheader(self):
@@ -155,6 +138,11 @@ class MachineLearning:
 
         return np.asarray(header)
 
+    """
+    Print out a sorted list of word from a given tweet
+    """
+    
+    
     def getWordsFromTweet(self, tweetNo):
         X = np.asmatrix(np.loadtxt(dataFile))
         tweet = X.getA()[tweetNo]
@@ -167,7 +155,7 @@ class MachineLearning:
 
     """
     Count all occurences of each word, and find the most used.
-    This version is optimized and uses more build-in functions than last iteration
+    Optimized version which uses more build-in functions than last iteration
     """
 
 
@@ -191,35 +179,6 @@ class MachineLearning:
 
         print currentWord, 'has', currentMax, 'occurences'
 
-    """
-    Count all occurences of each word, and find the k most used. K is 3 as standard
-    """
-
-
-    def findKMostPopularWords(self, K=3):
-        X = np.asmatrix(np.loadtxt(dataFile))
-
-        header = self._sanitizeColumnheader()
-
-        maxList = []
-
-        for k in range(K):
-            maxList.append((0, 0))
-
-        currentMinMax = 0
-        minMaxIndex = 0
-        currentCounter = 0
-
-        for wordID, word in enumerate(header):
-            currentCounter = 0
-            for tweet in range(len(X[:, wordID])):
-                currentCounter += X[tweet, wordID]
-
-            if currentCounter > currentMinMax:
-                maxList[minMaxIndex] = (currentCounter, word)
-                minMaxIndex = self._findNewMinMax(maxList)
-
-        print maxList
 
     """
     Given a list of words, the methods predicts which words
