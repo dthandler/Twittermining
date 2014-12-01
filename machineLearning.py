@@ -2,11 +2,6 @@
 """
 Textprocessing of tweets
 
-Author:
-Daniel Handler
-s113446
-Technical University of Denmark
-
 Disclaimer: TmgSimple package from course
 02450 Introduction to Machine Learning
 """
@@ -15,6 +10,9 @@ Disclaimer: TmgSimple package from course
 import numpy as np
 from tmgsimple import TmgSimple
 from sklearn.decomposition import ProjectedGradientNMF
+from sklearn.cluster import k_means
+from pylab import figure, show
+from toolbox_02450 import clusterplot
 import nltk
 import re
 
@@ -23,7 +21,9 @@ GLOBAL VARIABLES
 """
 attributFile = 'data/attributes.data'
 dataFile = 'data/datamatrix.data'
-formattedDatabase = "data/formattedDatabase.data"
+formattedDatabase = 'data/formattedDatabase.data'
+factoredHMatrix = 'data/factoredHMatrix.data'
+factoredWMatrix = 'data/factoredWMatrix.data'
 
 
 class MachineLearning:
@@ -33,6 +33,7 @@ class MachineLearning:
         self._makeTextMatrix(databaseFile, stopwordFile)
 
         self._nonNegativeFactorization()
+        self._clustering()
 
     def _formatDatabase(self, dataBase):
         """
@@ -62,11 +63,15 @@ class MachineLearning:
         datFile = open(dataFile, 'w')
 
         for word in attributeNames:
-            attFile.write(str(word, '\n'))
+            attFile.write(word)
+            attFile.write('\n')
+            
+        attFile.close
 
         for i in range(40):
             np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000,
-                                                      sort=True), fmt='%i')
+                                                      sort=True), fmt='%i')                                   
+        datFile.close
 
     def _nonNegativeFactorization(self):
         """
@@ -76,10 +81,47 @@ class MachineLearning:
         print 'Loading data..'
         X = np.asmatrix(np.loadtxt(dataFile))
         print 'Data loaded. Making model..'
-        model = ProjectedGradientNMF(init='nndsvd')
+        model = ProjectedGradientNMF(n_components=29, init='nndsvd')
         print 'Fitting model..'
         model.fit(X)
         print 'Model fit'
+        
+        print 'Error rate is', model.reconstruction_err_
+        
+        #  H-matrix
+        outFile1 = open(factoredHMatrix, 'w')
+        np.savetxt(outFile1, model.components_, fmt='%i')
+        outFile1.close
+        
+        # W-matrix
+        outFile2 = open(factoredWMatrix, 'w')
+        np.savetxt(outFile2, model.transform(X), fmt='%i')
+        outFile2.close
+        
+    def _clustering(self):
+    
+        # Get data
+        print 'Get cluster data..'
+        H = np.asmatrix(np.loadtxt(factoredHMatrix)).T
+        words =  set(open(attributFile).read().split())     
+        
+        y = range(len(words))
+            
+       #clustering
+        clusterNumber=4; runNumber=10;
+
+        N, M = H.shape
+
+        print 'Calculate k-means..'
+        # K-means clustering:
+        centroids, cls, inertia = k_means(H,clusterNumber,n_init=runNumber)
+    
+        print 'Plotting results..'
+        # Plot results:
+        figure(figsize=(14,9))
+        clusterplot(H, cls, centroids, y)
+        show()
+        
 
     """
     THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS;
