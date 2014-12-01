@@ -2,7 +2,7 @@
 """
 Textprocessing of tweets
 
-Disclaimer: TmgSimple package from course
+Disclaimer: TmgSimple % toolbox_02450 packages from course
 02450 Introduction to Machine Learning
 """
 
