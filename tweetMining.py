@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Collection of tweets
+
+Author:
+Arthur Desjardins
+s131187
+Technical University of Denmark
+"""
+
 import twython
 import os
 import re
@@ -63,14 +73,14 @@ class TweetMining:
                          count=100)
         try:
             tweet_search = self.twitter.search(**query)
+            tweet_statuses = tweet_search['statuses']
+            self._save_tweets(tweet_statuses, filename)
+            return self._next_search_id(tweet_search['search_metadata']
+                                        ['next_results'])
         except TwythonError:
             print("Problem with Twython, please try again")
         except AttributeError:
             print("Problem with the authentication, please enter credentials")
-        tweet_statuses = tweet_search['statuses']
-        self._save_tweets(tweet_statuses, filename)
-        return self._next_search_id(tweet_search['search_metadata']
-                                    ['next_results'])
 
     def search_tweets(self, search_count, search_query, filename):
         """
