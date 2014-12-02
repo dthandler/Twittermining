@@ -81,7 +81,7 @@ class MachineLearning:
         print 'Loading data..'
         X = np.asmatrix(np.loadtxt(dataFile))
         print 'Data loaded. Making model..'
-        model = ProjectedGradientNMF(n_components=29, init='nndsvd')
+        model = ProjectedGradientNMF(init='nndsvd')
         print 'Fitting model..'
         model.fit(X)
         print 'Model fit'
@@ -125,7 +125,7 @@ class MachineLearning:
 
     """
     THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS;
-    THESE ARE DEVELOPED TO CHECK THE IMPLEMENTATION OF THE
+    THESE ARE DEVELOPED TO TEST THE IMPLEMENTATION OF THE
     BAG OF WORD REPRESENTATION AND THE MATRIX FACTORIZATION
     """
 
