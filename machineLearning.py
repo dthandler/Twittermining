@@ -6,7 +6,6 @@ Disclaimer: TmgSimple % toolbox_02450 packages from course
 02450 Introduction to Machine Learning
 """
 
-
 import numpy as np
 from tmgsimple import TmgSimple
 from sklearn.decomposition import ProjectedGradientNMF
@@ -31,9 +30,11 @@ class MachineLearning:
     def __init__(self, databaseFile, stopwordFile):
         self._formatDatabase(databaseFile)
         self._makeTextMatrix(databaseFile, stopwordFile)
-
+        """
         self._nonNegativeFactorization()
         self._clustering()
+        """
+        self._nmf_with_results(10)
 
     def _formatDatabase(self, dataBase):
         """
@@ -65,12 +66,12 @@ class MachineLearning:
         for word in attributeNames:
             attFile.write(word)
             attFile.write('\n')
-            
+
         attFile.close
 
         for i in range(40):
             np.savetxt(datFile, textMatrix.get_matrix(i*1000, (i+1)*1000,
-                                                      sort=True), fmt='%i')                                   
+                                                      sort=True), fmt='%i')
         datFile.close
 
     def _nonNegativeFactorization(self):
@@ -85,25 +86,58 @@ class MachineLearning:
         print 'Fitting model..'
         model.fit(X)
         print 'Model fit'
-        
+
         print 'Error rate is', model.reconstruction_err_
-        
+
         #  H-matrix
         outFile1 = open(factoredHMatrix, 'w')
         np.savetxt(outFile1, model.components_, fmt='%i')
         outFile1.close
-        
+
         # W-matrix
         outFile2 = open(factoredWMatrix, 'w')
         np.savetxt(outFile2, model.transform(X), fmt='%i')
         outFile2.close
-        
+
+    def _nmf_with_results(self, k):
+        """
+        Encapsulate the NMF runs
+        Print the results as plain text
+        input: k, max number of clusters
+        """
+        X = np.asmatrix(np.loadtxt(dataFile))
+        for i in range(0, k):
+            print i+1, 'clusters:', self._nmf_fixed_component(i+1, X)
+
+    def _nmf_fixed_component(self, i, X):
+        """
+        Uses sklearn to make the non negative factorization
+        input: i, number of clusters for this NMF instance
+        """
+        model = ProjectedGradientNMF(n_components=i, init='nndsvd')
+        model.fit(X)
+        #  H-matrix (clusters x words)
+        H = model.components_
+        # W-matrix (documents x clusters)
+        W = model.transform(X)
+        # word matrix
+        words = open(attributFile).read().split()
+        # processing extremely basic cluster bush
+        most_relevant_words = np.argmax(H, axis=1)
+        docs_per_cluster = [0]*i
+        for tweet in W:
+            most_relevant_cluster = np.argmax(tweet)
+            docs_per_cluster[most_relevant_cluster] += 1
+        clusters = dict(((words[most_relevant_words[i]], docs_per_cluster[i])
+                         for i in range(0, i)))
+        return clusters
+
     def _clustering(self):
-    
+
         # Get data
         print 'Get cluster data..'
         H = np.asmatrix(np.loadtxt(factoredHMatrix)).T
-        words =  set(open(attributFile).read().split())     
+        words = set(open(attributFile).read().split())     
         
         y = range(len(words))
             

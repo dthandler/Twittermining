@@ -13,7 +13,6 @@ import os
 import re
 import codecs
 import configparser
-from twython.exceptions import TwythonError
 
 
 class TweetMining:
@@ -77,8 +76,6 @@ class TweetMining:
             self._save_tweets(tweet_statuses, filename)
             return self._next_search_id(tweet_search['search_metadata']
                                         ['next_results'])
-        except TwythonError:
-            print("Problem with Twython, please try again")
         except AttributeError:
             print("Problem with the authentication, please enter credentials")
 

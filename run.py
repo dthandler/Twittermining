@@ -12,14 +12,13 @@ keys can be stored in a cfg file or hardcoded
 search_tweets(hundreds of desired tweets, query string, output filename)
 """
 tweetminer = TweetMining()
-tweetminer.search_tweets(1, 'sport', 'data/output_test1.txt')
+tweetminer.search_tweets(10, 'sport', 'data/sport_1000tweets.txt')
 
 """
 running machineLearning
 """
 
-# databaseFile = 'data/test40k_2nd.txt'
-databaseFile = 'data/database_3900tweets.txt'
+databaseFile = 'data/sport_1000tweets.txt'
 stopwordFile = 'data/stopwords.txt'
 
 analysis = MachineLearning(databaseFile, stopwordFile)
