@@ -30,10 +30,8 @@ class MachineLearning:
     def __init__(self, databaseFile, stopwordFile):
         self._formatDatabase(databaseFile)
         self._makeTextMatrix(databaseFile, stopwordFile)
-        """
-        self._nonNegativeFactorization()
-        self._clustering()
-        """
+        # self._nonNegativeFactorization()
+        # self._clustering()
         self._nmf_with_results(10)
 
     def _formatDatabase(self, dataBase):
@@ -104,6 +102,7 @@ class MachineLearning:
         Encapsulate the NMF runs
         Print the results as plain text
         input: k, max number of clusters
+        author: Arthur Desjardins
         """
         X = np.asmatrix(np.loadtxt(dataFile))
         for i in range(0, k):
@@ -113,6 +112,7 @@ class MachineLearning:
         """
         Uses sklearn to make the non negative factorization
         input: i, number of clusters for this NMF instance
+        author: Arthur Desjardins
         """
         model = ProjectedGradientNMF(n_components=i, init='nndsvd')
         model.fit(X)
@@ -137,25 +137,23 @@ class MachineLearning:
         # Get data
         print 'Get cluster data..'
         H = np.asmatrix(np.loadtxt(factoredHMatrix)).T
-        words = set(open(attributFile).read().split())     
-        
-        y = range(len(words))
-            
-       #clustering
-        clusterNumber=4; runNumber=10;
+        words = set(open(attributFile).read().split())
 
+        y = range(len(words))
+
+        # clustering
+        clusterNumber = 4
+        runNumber = 10
         N, M = H.shape
 
         print 'Calculate k-means..'
         # K-means clustering:
-        centroids, cls, inertia = k_means(H,clusterNumber,n_init=runNumber)
-    
+        centroids, cls, inertia = k_means(H, clusterNumber, n_init=runNumber)
         print 'Plotting results..'
         # Plot results:
-        figure(figsize=(14,9))
+        figure(figsize=(14, 9))
         clusterplot(H, cls, centroids, y)
         show()
-        
 
     """
     THE FOLLOWING IS A SMALL COLLECTION OF MACHINE LEARNING METHODS;

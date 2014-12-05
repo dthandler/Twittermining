@@ -12,7 +12,7 @@ keys can be stored in a cfg file or hardcoded
 search_tweets(hundreds of desired tweets, query string, output filename)
 """
 tweetminer = TweetMining()
-tweetminer.search_tweets(10, 'sport', 'data/sport_1000tweets.txt')
+tweetminer.search_tweets(400, 'sport', 'data/sport_40000tweets.txt')
 
 """
 running machineLearning
